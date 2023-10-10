@@ -6,10 +6,12 @@ public class CashRegisterMVCApp {
 
     public static void main(String[] args) {
         // Assemble all the pieces of the Cash Register MVC
-        ArrayList<Product> product = loadProductsFromFile("src/products.txt");
-        ArrayList<Product> products = new ArrayList<>();
+        ArrayList<Product> products = loadProductsFromFile("src/products.txt");
 
-        CashRegisterModel m = new CashRegisterModel(new ArrayList <Product> ());
+
+
+        CashRegisterModel m = new CashRegisterModel(products);
+
         Display v = new Display();
         m.addPropertyChangeListener(v);
         Keyboard c = new Keyboard("Keyboard",m);
