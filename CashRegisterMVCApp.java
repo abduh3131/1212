@@ -1,15 +1,25 @@
 import java.util.ArrayList;
+import java.io.*;
 import java.util.Scanner;
-import java.io.File;
-import java.io.FileNotFoundException;
 
 public class CashRegisterMVCApp {
 
+    public static void main(String[] args) {
+        // Assemble all the pieces of the Cash Register MVC
+        ArrayList<Product> product = loadProductsFromFile("src/products.txt");
+        ArrayList<Product> products = new ArrayList<>();
+
+        CashRegisterModel m = new CashRegisterModel(new ArrayList <Product> ());
+        Display v = new Display();
+        m.addPropertyChangeListener(v);
+        Keyboard c = new Keyboard("Keyboard",m);
+
+    }
+
     public static ArrayList<Product> loadProductsFromFile(String filename) {
         ArrayList<Product> products = new ArrayList<>();
-        File file = new File("src/" + filename);
 
-        try (Scanner scanner = new Scanner(file)) {
+        try (Scanner scanner = new Scanner(new File("src/products.txt"))) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String[] parts = line.split(",");
@@ -27,11 +37,5 @@ public class CashRegisterMVCApp {
         return products;
     }
 
-    public static void main(String[] args) {
-        ArrayList<Product> products = loadProductsFromFile("products.txt");
-        CashRegisterModel m = new CashRegisterModel(products);
-        Display v = new Display();
-        m.addPropertyChangeListener(v);
-        Keyboard c = new Keyboard("Keyboard", m);
     }
-}
+
