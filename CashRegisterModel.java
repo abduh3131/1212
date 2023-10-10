@@ -4,34 +4,44 @@ import java.util.ArrayList;
 
 public class CashRegisterModel {
 
-    private PropertyChangeSupport observables;
-    private ArrayList<Product> myProducts;
+	private PropertyChangeSupport observables;
+	private ArrayList<Product> myProducts;
+	private Product currentProduct;
 
-    CashRegisterModel (ArrayList<Product> products) {
-        myProducts=products;
-        observables = new PropertyChangeSupport(this);
-    }
+	CashRegisterModel (ArrayList<Product> products) {
+		myProducts = products;
+		observables = new PropertyChangeSupport(this);
+	}
 
-    // CashRegisterModel.java
+	public void addPropertyChangeListener(PropertyChangeListener pcl) {
+		observables.addPropertyChangeListener(pcl);
+	}
 
-    public void addPropertyChangeListener(PropertyChangeListener pcl) {
-        observables.addPropertyChangeListener(pcl);
-    }
+	public void processUPC(int code) {
+		Product oldProduct = currentProduct;
+		currentProduct = null;
 
-    public void processUPC(int code) {
-        for (Product product : myProducts) {
-            if (product.getUPC() == code) {
-                observables.firePropertyChange("product", null, product);
-                return;
-            }
-        }
-        observables.firePropertyChange("invalidUPC", null, code);
-    }
+		// use UPC to look up product and price
+		for (Product product : myProducts) {
+			if (product.getUPC() == code) {
+				currentProduct = product;
+				break;
+			}
+		}
+
+		// Notify observers
+		if (currentProduct != null) {
+			if (!currentProduct.equals(oldProduct)) {
+				observables.firePropertyChange("product", oldProduct, currentProduct);
+			}
+		} else {
+			// Notify observers that no matching product was found
+			observables.firePropertyChange("invalidUPC", null, code);
+		}
+	}
 
 
-
-    public ArrayList<Product>	getProductList() {
-        return this.myProducts;
-    }
-
+	public ArrayList<Product> getProductList() {
+		return this.myProducts;
+	}
 }
